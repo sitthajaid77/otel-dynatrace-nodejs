@@ -163,7 +163,8 @@ function addDatabaseContext(span, operation = {}) {
  * @param {Object} options - Additional options
  */
 function withSpan(name, attributes = {}, callback, options = {}) {
-  const tracer = trace.getActiveTracer() || trace.getTracer('default');
+  // const tracer = trace.getActiveTracer() || trace.getTracer('default');
+  const tracer = trace.getTracer('span-helpers');
   
   return tracer.startActiveSpan(name, { attributes }, (span) => {
     const startTime = Date.now();
@@ -205,7 +206,8 @@ function withSpan(name, attributes = {}, callback, options = {}) {
  * @param {Object} options - Additional options
  */
 async function withSpanAsync(name, attributes = {}, callback, options = {}) {
-  const tracer = trace.getActiveTracer() || trace.getTracer('default');
+  // const tracer = trace.getActiveTracer() || trace.getTracer('default');
+  const tracer = trace.getTracer('span-helpers');
   
   return tracer.startActiveSpan(name, { attributes }, async (span) => {
     const startTime = Date.now();

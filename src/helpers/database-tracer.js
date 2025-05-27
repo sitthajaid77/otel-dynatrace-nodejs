@@ -12,7 +12,8 @@ const { addErrorDetails, addDatabaseContext } = require('./span-helpers.js');
  * @returns {Promise} Database operation result
  */
 async function traceDatabaseOperation(operation, dbFunction, context = {}, traceOptions = {}) {
-  const tracer = trace.getActiveTracer() || trace.getTracer('database-tracer');
+  // const tracer = trace.getActiveTracer() || trace.getTracer('database-tracer');
+  const tracer = trace.getTracer('database-tracer');
   const spanName = traceOptions.spanName || `DB ${operation}`;
   
   return tracer.startActiveSpan(spanName, {

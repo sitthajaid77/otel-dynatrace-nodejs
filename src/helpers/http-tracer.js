@@ -13,7 +13,8 @@ const { addErrorDetails } = require('./span-helpers.js');
  * @returns {Promise} HTTP response
  */
 async function traceHttpRequest(httpClient, method, url, options = {}, traceOptions = {}) {
-  const tracer = trace.getActiveTracer() || trace.getTracer('http-tracer');
+  // const tracer = trace.getActiveTracer() || trace.getTracer('http-tracer');
+  const tracer = trace.getTracer('http-tracer');
   const spanName = traceOptions.spanName || `HTTP ${method.toUpperCase()}`;
   
   return tracer.startActiveSpan(spanName, {
