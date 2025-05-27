@@ -1,0 +1,19 @@
+{
+  "name": "otel-dynatrace-nodejs",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "type": "module",
+  "description": "OpenTelemetry Dynatrace instrumentation for Node.js",
+  "scripts": {
+    "start": "node examples/express-app.js"
+  },
+  "dependencies": {
+    "@opentelemetry/api": "1.7.0",
+    "@opentelemetry/sdk-node": "^0.45.0",
+    "@opentelemetry/auto-instrumentations-node": "^0.45.0",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.45.0",
+    "express": "^4.18.2",
+    "@opentelemetry/sdk-trace-base": "^0.45.0",
+    "@opentelemetry/semantic-conventions": "^1.17.0"
+  }
+}
