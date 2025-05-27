@@ -1,26 +1,26 @@
-// src/index.js - Main Library Entry Point
+// src/index.js - Main Library Entry Point (CommonJS Fixed)
 
-import { NodeSDK } from '@opentelemetry/sdk-node';
-import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
-import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
-import { Resource } from '@opentelemetry/resources';
-import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
-import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
-import { trace, context, SpanStatusCode } from '@opentelemetry/api';
+const { NodeSDK } = require('@opentelemetry/sdk-node');
+const { getNodeAutoInstrumentations } = require('@opentelemetry/auto-instrumentations-node');
+const { OTLPTraceExporter } = require('@opentelemetry/exporter-trace-otlp-http');
+const { Resource } = require('@opentelemetry/resources');
+const { SemanticResourceAttributes } = require('@opentelemetry/semantic-conventions');
+const { BatchSpanProcessor } = require('@opentelemetry/sdk-trace-base');
+const { trace, context, SpanStatusCode } = require('@opentelemetry/api');
 
 // Import utilities and helpers
-import { createConfig, getConfigSummary } from './utils/config.js';
-import { DynatraceTracer } from './tracer.js';
+const { createConfig, getConfigSummary } = require('./utils/config.js');
+const { DynatraceTracer } = require('./tracer.js');
 
-// Import helpers and middleware
-import * as spanHelpers from './helpers/span-helpers.js';
-import * as httpTracer from './helpers/http-tracer.js';
-import * as databaseTracer from './helpers/database-tracer.js';
+// Import helpers and middleware - Fixed to CommonJS
+const spanHelpers = require('./helpers/span-helpers.js');
+const httpTracer = require('./helpers/http-tracer.js');
+const databaseTracer = require('./helpers/database-tracer.js');
 
 /**
  * Main OtelDynatrace class
  */
-export class OtelDynatrace {
+class OtelDynatrace {
   #sdk;
   #tracer;
   #config;
@@ -143,7 +143,7 @@ export class OtelDynatrace {
  * @param {Object} configOptions - Configuration options
  * @returns {OtelDynatrace} Tracer instance
  */
-export function createTracer(configOptions = {}) {
+function createTracer(configOptions = {}) {
   const tracer = new OtelDynatrace(configOptions);
   tracer.start();
   return tracer;
@@ -155,7 +155,7 @@ export function createTracer(configOptions = {}) {
  * @param {Object} options - Middleware options
  * @returns {Function} Express middleware function
  */
-export function createExpressMiddleware(tracerInstance, options = {}) {
+function createExpressMiddleware(tracerInstance, options = {}) {
   const opts = {
     autoTrace: true,
     addBusinessContext: true,
@@ -382,7 +382,7 @@ export function createExpressMiddleware(tracerInstance, options = {}) {
  * @param {Object} options - Error middleware options
  * @returns {Function} Express error middleware
  */
-export function createErrorMiddleware(tracerInstance, options = {}) {
+function createErrorMiddleware(tracerInstance, options = {}) {
   const opts = {
     logErrors: true,
     includeStackTrace: false,
@@ -473,7 +473,7 @@ export function createErrorMiddleware(tracerInstance, options = {}) {
  * @param {Function} contextExtractor - Function to extract business context from request
  * @returns {Function} Express middleware
  */
-export function createBusinessContextMiddleware(contextExtractor) {
+function createBusinessContextMiddleware(contextExtractor) {
   return (req, res, next) => {
     const activeSpan = trace.getActiveSpan();
     
@@ -493,13 +493,18 @@ export function createBusinessContextMiddleware(contextExtractor) {
 }
 
 // Export helper modules
-export { spanHelpers, httpTracer, databaseTracer };
-
-// Export tracer class for advanced usage
-export { DynatraceTracer };
-
-// Export configuration utilities
-export { createConfig } from './utils/config.js';
+module.exports = {
+  OtelDynatrace,
+  createTracer,
+  createExpressMiddleware,
+  createErrorMiddleware,
+  createBusinessContextMiddleware,
+  spanHelpers,
+  httpTracer,
+  databaseTracer,
+  DynatraceTracer,
+  createConfig
+};
 
 // Default export for backward compatibility
-export default OtelDynatrace;
+module.exports.default = OtelDynatrace;

@@ -1,4 +1,4 @@
-// src/utils/config.js - Configuration Management Utilities
+// src/utils/config.js - Configuration Management Utilities (CommonJS)
 
 /**
  * Default configuration values
@@ -165,7 +165,7 @@ function validateConfig(config) {
  * @param {Object} userConfig - User provided configuration
  * @returns {Object} Final configuration
  */
-export function getConfig(userConfig = {}) {
+function getConfig(userConfig = {}) {
   let config = { ...DEFAULT_CONFIG };
   
   // Apply environment preset if available
@@ -191,7 +191,7 @@ export function getConfig(userConfig = {}) {
  * @param {Object} userConfig - User configuration
  * @returns {Object} Validated configuration
  */
-export function createConfig(userConfig = {}) {
+function createConfig(userConfig = {}) {
   const config = getConfig(userConfig);
   const validation = validateConfig(config);
   
@@ -211,7 +211,7 @@ export function createConfig(userConfig = {}) {
  * @param {Object} config - Configuration object
  * @returns {Object} Configuration summary
  */
-export function getConfigSummary(config) {
+function getConfigSummary(config) {
   return {
     serviceName: config.serviceName,
     serviceVersion: config.serviceVersion,
@@ -223,3 +223,10 @@ export function getConfigSummary(config) {
     dtApiToken: config.dtApiToken ? 'configured' : 'missing'
   };
 }
+
+// CommonJS exports
+module.exports = {
+  getConfig,
+  createConfig,
+  getConfigSummary
+};

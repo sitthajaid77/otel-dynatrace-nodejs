@@ -1,13 +1,13 @@
-// src/helpers/span-helpers.js - Enhanced Span Utilities
+// src/helpers/span-helpers.js - Enhanced Span Utilities (CommonJS)
 
-import { trace, SpanStatusCode } from '@opentelemetry/api';
+const { trace, SpanStatusCode } = require('@opentelemetry/api');
 
 /**
  * Add business context attributes to span
  * @param {Span} span - OpenTelemetry span
  * @param {Object} context - Business context data
  */
-export function addBusinessContext(span, context = {}) {
+function addBusinessContext(span, context = {}) {
   if (!span) return;
   
   Object.entries(context).forEach(([key, value]) => {
@@ -24,7 +24,7 @@ export function addBusinessContext(span, context = {}) {
  * @param {Error} error - Error object
  * @param {Object} options - Additional error context
  */
-export function addErrorDetails(span, error, options = {}) {
+function addErrorDetails(span, error, options = {}) {
   if (!span || !error) return;
   
   // Record the exception
@@ -80,7 +80,7 @@ export function addErrorDetails(span, error, options = {}) {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object (optional)
  */
-export function addHttpContext(span, req, res = null) {
+function addHttpContext(span, req, res = null) {
   if (!span || !req) return;
   
   // Request information
@@ -126,7 +126,7 @@ export function addHttpContext(span, req, res = null) {
  * @param {Span} span - OpenTelemetry span
  * @param {Object} operation - Database operation details
  */
-export function addDatabaseContext(span, operation = {}) {
+function addDatabaseContext(span, operation = {}) {
   if (!span) return;
   
   if (operation.type) {
@@ -162,7 +162,7 @@ export function addDatabaseContext(span, operation = {}) {
  * @param {Function} callback - Function to execute within span
  * @param {Object} options - Additional options
  */
-export function withSpan(name, attributes = {}, callback, options = {}) {
+function withSpan(name, attributes = {}, callback, options = {}) {
   const tracer = trace.getActiveTracer() || trace.getTracer('default');
   
   return tracer.startActiveSpan(name, { attributes }, (span) => {
@@ -204,7 +204,7 @@ export function withSpan(name, attributes = {}, callback, options = {}) {
  * @param {Function} callback - Async function to execute within span
  * @param {Object} options - Additional options
  */
-export async function withSpanAsync(name, attributes = {}, callback, options = {}) {
+async function withSpanAsync(name, attributes = {}, callback, options = {}) {
   const tracer = trace.getActiveTracer() || trace.getTracer('default');
   
   return tracer.startActiveSpan(name, { attributes }, async (span) => {
@@ -246,7 +246,7 @@ export async function withSpanAsync(name, attributes = {}, callback, options = {
  * @param {Function} callback - Function to execute
  * @param {Object} options - Additional options
  */
-export function withBusinessSpan(operationName, businessContext = {}, callback, options = {}) {
+function withBusinessSpan(operationName, businessContext = {}, callback, options = {}) {
   const attributes = {
     'operation.type': 'business',
     'operation.name': operationName,
@@ -269,7 +269,7 @@ export function withBusinessSpan(operationName, businessContext = {}, callback, 
 /**
  * Async version of withBusinessSpan
  */
-export async function withBusinessSpanAsync(operationName, businessContext = {}, callback, options = {}) {
+async function withBusinessSpanAsync(operationName, businessContext = {}, callback, options = {}) {
   const attributes = {
     'operation.type': 'business',
     'operation.name': operationName,
@@ -288,3 +288,15 @@ export async function withBusinessSpanAsync(operationName, businessContext = {},
     return await callback(span);
   }, options);
 }
+
+// CommonJS exports
+module.exports = {
+  addBusinessContext,
+  addErrorDetails,
+  addHttpContext,
+  addDatabaseContext,
+  withSpan,
+  withSpanAsync,
+  withBusinessSpan,
+  withBusinessSpanAsync
+};

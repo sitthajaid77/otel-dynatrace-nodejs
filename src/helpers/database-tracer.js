@@ -1,7 +1,7 @@
-// src/helpers/database-tracer.js - Database Operation Tracing
+// src/helpers/database-tracer.js - Database Operation Tracing (CommonJS)
 
-import { trace, SpanStatusCode } from '@opentelemetry/api';
-import { addErrorDetails, addDatabaseContext } from './span-helpers.js';
+const { trace, SpanStatusCode } = require('@opentelemetry/api');
+const { addErrorDetails, addDatabaseContext } = require('./span-helpers.js');
 
 /**
  * Trace database operations with automatic span creation and error handling
@@ -11,7 +11,7 @@ import { addErrorDetails, addDatabaseContext } from './span-helpers.js';
  * @param {Object} traceOptions - Tracing options
  * @returns {Promise} Database operation result
  */
-export async function traceDatabaseOperation(operation, dbFunction, context = {}, traceOptions = {}) {
+async function traceDatabaseOperation(operation, dbFunction, context = {}, traceOptions = {}) {
   const tracer = trace.getActiveTracer() || trace.getTracer('database-tracer');
   const spanName = traceOptions.spanName || `DB ${operation}`;
   
@@ -144,7 +144,7 @@ export async function traceDatabaseOperation(operation, dbFunction, context = {}
  * @param {Object} options - Tracing options
  * @returns {Object} Traced MongoDB collection wrapper
  */
-export function createTracedMongoCollection(mongoCollection, options = {}) {
+function createTracedMongoCollection(mongoCollection, options = {}) {
   const { database = 'unknown', collectionName } = options;
   
   const createContext = (operation, query = null, extraContext = {}) => ({
@@ -267,7 +267,7 @@ export function createTracedMongoCollection(mongoCollection, options = {}) {
  * @param {Object} options - Tracing options
  * @returns {Object} Traced Mongoose model wrapper
  */
-export function createTracedMongooseModel(mongooseModel, options = {}) {
+function createTracedMongooseModel(mongooseModel, options = {}) {
   const modelName = mongooseModel.modelName || 'unknown';
   
   const createContext = (operation, query = null, extraContext = {}) => ({
@@ -384,7 +384,7 @@ export function createTracedMongooseModel(mongooseModel, options = {}) {
  * @param {Object} options - Tracing options
  * @returns {Object} Traced Redis client wrapper
  */
-export function createTracedRedisClient(redisClient, options = {}) {
+function createTracedRedisClient(redisClient, options = {}) {
   const { host = 'unknown', port = 'unknown' } = options;
   
   const createContext = (operation, key = null, extraContext = {}) => ({
@@ -438,3 +438,11 @@ export function createTracedRedisClient(redisClient, options = {}) {
       )
   };
 }
+
+// CommonJS exports
+module.exports = {
+  traceDatabaseOperation,
+  createTracedMongoCollection,
+  createTracedMongooseModel,
+  createTracedRedisClient
+};

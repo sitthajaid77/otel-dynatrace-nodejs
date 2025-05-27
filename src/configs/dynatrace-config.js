@@ -1,4 +1,4 @@
-// src/config/dynatrace-config.js - Configuration Management
+// src/config/dynatrace-config.js - Configuration Management (CommonJS)
 
 /**
  * Default configuration for Dynatrace OpenTelemetry
@@ -144,7 +144,7 @@ const SERVICE_TEMPLATES = {
 /**
  * Dynatrace configuration class
  */
-export class DynatraceConfig {
+class DynatraceConfig {
   constructor(userConfig = {}) {
     this.config = this._mergeConfigurations(userConfig);
   }
@@ -365,7 +365,7 @@ export class DynatraceConfig {
  * @param {Object} userConfig - User configuration
  * @returns {DynatraceConfig} Configuration instance
  */
-export function createConfig(userConfig = {}) {
+function createConfig(userConfig = {}) {
   return new DynatraceConfig(userConfig);
 }
 
@@ -375,7 +375,7 @@ export function createConfig(userConfig = {}) {
  * @param {Object} userConfig - Additional user configuration
  * @returns {DynatraceConfig} Configuration instance
  */
-export function createServiceConfig(serviceType, userConfig = {}) {
+function createServiceConfig(serviceType, userConfig = {}) {
   return new DynatraceConfig({
     serviceTemplate: serviceType,
     ...userConfig
@@ -385,7 +385,7 @@ export function createServiceConfig(serviceType, userConfig = {}) {
 /**
  * Quick configuration for common scenarios
  */
-export const quickConfigs = {
+const quickConfigs = {
   /**
    * Development configuration
    */
@@ -414,5 +414,10 @@ export const quickConfigs = {
   })
 };
 
-// Export default config for backward compatibility
-export default DynatraceConfig;
+// CommonJS exports
+module.exports = {
+  DynatraceConfig,
+  createConfig,
+  createServiceConfig,
+  quickConfigs
+};

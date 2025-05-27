@@ -1,12 +1,12 @@
-// src/tracer.js - Enhanced Dynatrace Tracer Class
+// src/tracer.js - Enhanced Dynatrace Tracer Class (CommonJS)
 
-import { trace, context, SpanStatusCode } from '@opentelemetry/api';
-import { addErrorDetails, addBusinessContext } from './helpers/span-helpers.js';
+const { trace, context, SpanStatusCode } = require('@opentelemetry/api');
+const { addErrorDetails, addBusinessContext } = require('./helpers/span-helpers.js');
 
 /**
  * Enhanced Dynatrace Tracer class with comprehensive tracing capabilities
  */
-export class DynatraceTracer {
+class DynatraceTracer {
   #tracer;
   #serviceName;
   #version;
@@ -393,3 +393,6 @@ export class DynatraceTracer {
     return this.#tracer;
   }
 }
+
+// CommonJS export
+module.exports = { DynatraceTracer };

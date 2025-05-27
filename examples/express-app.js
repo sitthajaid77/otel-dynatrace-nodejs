@@ -1,15 +1,15 @@
-// examples/express-app.js - Complete Working Example
+// examples/express-app.js - Complete Working Example (CommonJS)
 
-import express from 'express';
-import axios from 'axios';
-import { 
+const express = require('express');
+const axios = require('axios');
+const { 
   createTracer, 
   createExpressMiddleware, 
   createErrorMiddleware,
   spanHelpers,
   httpTracer,
   databaseTracer 
-} from '../src/index.js';
+} = require('../src/index.js');
 
 // Initialize Express app
 const app = express();
@@ -412,4 +412,4 @@ process.on('SIGINT', async () => {
   process.exit(0);
 });
 
-export default app;
+module.exports = app;

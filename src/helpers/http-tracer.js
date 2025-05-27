@@ -1,7 +1,7 @@
-// src/helpers/http-tracer.js - HTTP Request Tracing
+// src/helpers/http-tracer.js - HTTP Request Tracing (CommonJS)
 
-import { trace, SpanStatusCode } from '@opentelemetry/api';
-import { addErrorDetails } from './span-helpers.js';
+const { trace, SpanStatusCode } = require('@opentelemetry/api');
+const { addErrorDetails } = require('./span-helpers.js');
 
 /**
  * Trace HTTP requests with automatic span creation and error handling
@@ -12,7 +12,7 @@ import { addErrorDetails } from './span-helpers.js';
  * @param {Object} traceOptions - Tracing options
  * @returns {Promise} HTTP response
  */
-export async function traceHttpRequest(httpClient, method, url, options = {}, traceOptions = {}) {
+async function traceHttpRequest(httpClient, method, url, options = {}, traceOptions = {}) {
   const tracer = trace.getActiveTracer() || trace.getTracer('http-tracer');
   const spanName = traceOptions.spanName || `HTTP ${method.toUpperCase()}`;
   
@@ -158,7 +158,7 @@ export async function traceHttpRequest(httpClient, method, url, options = {}, tr
  * @param {Object} defaultTraceOptions - Default tracing options
  * @returns {Object} Traced axios instance
  */
-export function createTracedAxios(axios, defaultTraceOptions = {}) {
+function createTracedAxios(axios, defaultTraceOptions = {}) {
   return {
     get: (url, config = {}) => traceHttpRequest(
       axios.get.bind(axios), 
@@ -220,7 +220,7 @@ export function createTracedAxios(axios, defaultTraceOptions = {}) {
  * @param {Object} defaultTraceOptions - Default tracing options
  * @returns {Function} Traced fetch function
  */
-export function createTracedFetch(fetchFn = fetch, defaultTraceOptions = {}) {
+function createTracedFetch(fetchFn = fetch, defaultTraceOptions = {}) {
   return async (url, options = {}) => {
     const method = options.method || 'GET';
     
@@ -250,7 +250,7 @@ export function createTracedFetch(fetchFn = fetch, defaultTraceOptions = {}) {
  * @param {Function} httpClient - HTTP client function
  * @returns {Object} Service-specific traced client
  */
-export function createServiceClient(serviceName, httpClient) {
+function createServiceClient(serviceName, httpClient) {
   const defaultOptions = {
     clientName: serviceName,
     businessContext: {
@@ -294,3 +294,11 @@ export function createServiceClient(serviceName, httpClient) {
       )
   };
 }
+
+// CommonJS exports
+module.exports = {
+  traceHttpRequest,
+  createTracedAxios,
+  createTracedFetch,
+  createServiceClient
+};

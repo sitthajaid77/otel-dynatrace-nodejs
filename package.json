@@ -2,7 +2,7 @@
   "name": "otel-dynatrace-nodejs",
   "version": "1.0.0",
   "main": "src/index.js",
-  "type": "module",
+  "type": "commonjs",
   "description": "OpenTelemetry Dynatrace instrumentation for Node.js",
   "scripts": {
     "start": "node examples/express-app.js"
