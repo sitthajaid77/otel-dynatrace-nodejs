@@ -1,4 +1,4 @@
-// src/helpers/http-tracer.js - HTTP Request Tracing (CommonJS)
+// src/helpers/http-tracer.js - HTTP Request Tracing (CommonJS) - FIXED
 
 const { trace, SpanStatusCode } = require('@opentelemetry/api');
 const { addErrorDetails } = require('./span-helpers.js');
@@ -13,7 +13,7 @@ const { addErrorDetails } = require('./span-helpers.js');
  * @returns {Promise} HTTP response
  */
 async function traceHttpRequest(httpClient, method, url, options = {}, traceOptions = {}) {
-  // const tracer = trace.getActiveTracer() || trace.getTracer('http-tracer');
+  // FIXED: Use trace.getTracer() instead of getActiveTracer()
   const tracer = trace.getTracer('http-tracer');
   const spanName = traceOptions.spanName || `HTTP ${method.toUpperCase()}`;
   

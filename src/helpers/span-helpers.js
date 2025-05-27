@@ -1,4 +1,4 @@
-// src/helpers/span-helpers.js - Enhanced Span Utilities (CommonJS)
+// src/helpers/span-helpers.js - Enhanced Span Utilities (CommonJS) - FIXED
 
 const { trace, SpanStatusCode } = require('@opentelemetry/api');
 
@@ -163,7 +163,7 @@ function addDatabaseContext(span, operation = {}) {
  * @param {Object} options - Additional options
  */
 function withSpan(name, attributes = {}, callback, options = {}) {
-  // const tracer = trace.getActiveTracer() || trace.getTracer('default');
+  // FIXED: Use trace.getTracer() instead of getActiveTracer()
   const tracer = trace.getTracer('span-helpers');
   
   return tracer.startActiveSpan(name, { attributes }, (span) => {
@@ -206,7 +206,7 @@ function withSpan(name, attributes = {}, callback, options = {}) {
  * @param {Object} options - Additional options
  */
 async function withSpanAsync(name, attributes = {}, callback, options = {}) {
-  // const tracer = trace.getActiveTracer() || trace.getTracer('default');
+  // FIXED: Use trace.getTracer() instead of getActiveTracer()
   const tracer = trace.getTracer('span-helpers');
   
   return tracer.startActiveSpan(name, { attributes }, async (span) => {

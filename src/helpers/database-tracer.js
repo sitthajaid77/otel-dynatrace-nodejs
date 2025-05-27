@@ -1,4 +1,4 @@
-// src/helpers/database-tracer.js - Database Operation Tracing (CommonJS)
+// src/helpers/database-tracer.js - Database Operation Tracing (CommonJS) - FIXED
 
 const { trace, SpanStatusCode } = require('@opentelemetry/api');
 const { addErrorDetails, addDatabaseContext } = require('./span-helpers.js');
@@ -12,7 +12,7 @@ const { addErrorDetails, addDatabaseContext } = require('./span-helpers.js');
  * @returns {Promise} Database operation result
  */
 async function traceDatabaseOperation(operation, dbFunction, context = {}, traceOptions = {}) {
-  // const tracer = trace.getActiveTracer() || trace.getTracer('database-tracer');
+  // FIXED: Use trace.getTracer() instead of getActiveTracer()
   const tracer = trace.getTracer('database-tracer');
   const spanName = traceOptions.spanName || `DB ${operation}`;
   

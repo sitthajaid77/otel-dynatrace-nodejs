@@ -1,4 +1,4 @@
-// src/index.js - Main Library Entry Point (CommonJS Fixed)
+// src/index.js - Main Library Entry Point (CommonJS Fixed) - WITH DEBUG LOGGING
 
 const { NodeSDK } = require('@opentelemetry/sdk-node');
 const { getNodeAutoInstrumentations } = require('@opentelemetry/auto-instrumentations-node');
@@ -47,6 +47,26 @@ class OtelDynatrace {
         'Content-Type': 'application/x-protobuf'
       },
     });
+
+    // 🔧 DEBUG LOGGING: Add export monitoring
+    console.log(`🔧 ODN Debug: Exporter URL = ${this.#config.dtApiUrl}/v1/traces`);
+    console.log(`🔧 ODN Debug: Token = ${this.#config.dtApiToken ? 'CONFIGURED' : 'MISSING'}`);
+    console.log(`🔧 ODN Debug: Sampling Rate = ${this.#config.samplingRate}`);
+
+    // Override export method to add logging
+    const originalExport = traceExporter.export.bind(traceExporter);
+    traceExporter.export = (spans, resultCallback) => {
+      console.log(`📤 ODN: Attempting to export ${spans.length} spans to Dynatrace`);
+      
+      return originalExport(spans, (result) => {
+        if (result.code === 0) {
+          console.log(`✅ ODN: Successfully exported ${spans.length} spans to Dynatrace`);
+        } else {
+          console.error(`❌ ODN: Failed to export spans to Dynatrace:`, result);
+        }
+        resultCallback(result);
+      });
+    };
 
     // Create batch span processor
     const spanProcessor = new BatchSpanProcessor(traceExporter, {
@@ -99,6 +119,17 @@ class OtelDynatrace {
       
       const summary = getConfigSummary(this.#config);
       console.log('OpenTelemetry initialized for Dynatrace:', summary);
+      
+      // 🔧 DEBUG: Create test span
+      setTimeout(() => {
+        const testTracer = trace.getTracer('odn-test');
+        const span = testTracer.startSpan('odn-test-span');
+        span.setAttribute('test.source', 'odn-library');
+        span.setAttribute('test.timestamp', Date.now());
+        span.end();
+        console.log('🧪 ODN: Test span created');
+      }, 2000);
+      
     } catch (error) {
       console.error('Failed to start OpenTelemetry:', error);
       throw error;
@@ -199,6 +230,9 @@ function createExpressMiddleware(tracerInstance, options = {}) {
     const spanName = req.route?.path 
       ? `${req.method} ${req.route.path}`
       : `${req.method} ${req.path}`;
+
+    // 🔧 DEBUG: Log span creation
+    console.log(`🟡 ODN Middleware: Creating span for ${spanName}`);
 
     // Start active span
     const span = tracer.startSpan(spanName, {
@@ -347,6 +381,9 @@ function createExpressMiddleware(tracerInstance, options = {}) {
             span.setStatus({ code: SpanStatusCode.OK });
           }
 
+          // 🔧 DEBUG: Log span end
+          console.log(`🟢 ODN Middleware: Ending span ${spanName} (${res.statusCode}, ${duration}ms)`);
+
           // End span
           span.end();
           
@@ -369,6 +406,7 @@ function createExpressMiddleware(tracerInstance, options = {}) {
           }
         });
 
+        console.log(`🔴 ODN Middleware: Error in span ${spanName}:`, error.message);
         span.end();
         next(error);
       }
@@ -508,3 +546,4 @@ module.exports = {
 
 // Default export for backward compatibility
 module.exports.default = OtelDynatrace;
+    
